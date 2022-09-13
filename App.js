@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 
- import React from 'react';
- import type {Node} from 'react';
+ import React, { useState } from "react";
+ import type { Node } from "react";
  import {
    SafeAreaView,
    ScrollView,
@@ -16,79 +16,46 @@
    Text,
    useColorScheme,
    View,
- } from 'react-native';
+   TextInput,
+   Button,
+   Alert,
+   TouchableOpacity
+ } from "react-native";
  
- import {
-   Colors,
-   DebugInstructions,
-   Header,
-   LearnMoreLinks,
-   ReloadInstructions,
- } from 'react-native/Libraries/NewAppScreen';
- 
- /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
-  * LTI update could not be added via codemod */
- const Section = ({children, title}): Node => {
-   const isDarkMode = useColorScheme() === 'dark';
-   return (
-     <View style={styles.sectionContainer}>
-       <Text
-         style={[
-           styles.sectionTitle,
-           {
-             color: isDarkMode ? Colors.white : Colors.black,
-           },
-         ]}>
-         {title}
-       </Text>
-       <Text
-         style={[
-           styles.sectionDescription,
-           {
-             color: isDarkMode ? Colors.light : Colors.dark,
-           },
-         ]}>
-         {children}
-       </Text>
-     </View>
-   );
- };
  
  const App: () => Node = () => {
-   const isDarkMode = useColorScheme() === 'dark';
- 
-   const backgroundStyle = {
-     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-   };
- 
+   const [inputText, onChangeInputText] = useState("hello world");
+   const [capitalText, setAllCapital] = useState("");
+   const [mixLowerAdnCapital, setmixLowerAdnCapital] = useState("");
+   const [commaEachChar, setCommaEachChar] = useState("");
+   const handleButton = async () => {
+     setAllCapital(inputText.toUpperCase());
+     setmixLowerAdnCapital(inputText.replace(/(.)(.)/g, (_,l,u) => l.toLowerCase() + u.toUpperCase()));
+     setCommaEachChar(inputText.replace(/.{1}/g, '$&,'));
+
+   }
    return (
-     <SafeAreaView style={backgroundStyle}>
-       <StatusBar
-         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-         backgroundColor={backgroundStyle.backgroundColor}
-       />
+     <SafeAreaView style={styles.container}>
+       <StatusBar barStyle={"light-content"} />
        <ScrollView
-         contentInsetAdjustmentBehavior="automatic"
-         style={backgroundStyle}>
-         <Header />
-         <View
-           style={{
-             backgroundColor: isDarkMode ? Colors.black : Colors.white,
-           }}>
-           <Section title="Step One">
-             Edit <Text style={styles.highlight}>App.js</Text> to change this
-             screen and then come back to see your edits.
-           </Section>
-           <Section title="See Your Changes">
-             <ReloadInstructions />
-           </Section>
-           <Section title="Debug">
-             <DebugInstructions />
-           </Section>
-           <Section title="Learn More">
-             Read the docs to discover what to do next:
-           </Section>
-           <LearnMoreLinks />
+       >
+         <View>
+           <TextInput
+             style={styles.input}
+             onChangeText={onChangeInputText}
+             value={inputText}
+             placeholder="Input String"
+             placeholderTextColor={"#333"}
+             
+           />
+           <TouchableOpacity onPress={handleButton} style={styles.buttonContainer}>
+             <Text style={styles.buttonText}>Proceed</Text>
+           </TouchableOpacity>
+           <View style={styles.wrapperResult}>
+             <Text style={styles.resultText}>{capitalText}</Text>
+             <Text style={styles.resultText}>{mixLowerAdnCapital}</Text>
+             <Text style={styles.resultText}>{commaEachChar}</Text>
+           </View>
          </View>
        </ScrollView>
      </SafeAreaView>
@@ -96,22 +63,43 @@
  };
  
  const styles = StyleSheet.create({
-   sectionContainer: {
-     marginTop: 32,
-     paddingHorizontal: 24,
+   container: {
+     flex: 1,
+     backgroundColor: "#fff",
+     padding: 20
    },
-   sectionTitle: {
-     fontSize: 24,
-     fontWeight: '600',
+ 
+   input: {
+     // height: 40,
+     // margin: 12,
+     // borderWidth: 1,
+     // padding: 10,
+     color: "#333",
+     marginBottom: 20,
+     backgroundColor: "#eee",
+     borderRadius: 8
    },
-   sectionDescription: {
-     marginTop: 8,
+   buttonContainer: {
+     elevation: 8,
+     backgroundColor: "#ee446d",
+     borderRadius: 10,
+     paddingVertical: 10,
+     paddingHorizontal: 12
+   },
+   buttonText: {
      fontSize: 18,
-     fontWeight: '400',
+     color: "#fff",
+     fontWeight: "bold",
+     alignSelf: "center",
+     textTransform: "uppercase"
    },
-   highlight: {
-     fontWeight: '700',
+   wrapperResult: {
+     marginTop: 20
    },
+   resultText: {
+     color: "#333",
+     marginTop: 10
+   }
  });
  
  export default App;
