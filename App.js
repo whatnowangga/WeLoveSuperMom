@@ -25,7 +25,7 @@
  
  
  const App: () => Node = () => {
-   const [inputText, onChangeInputText] = useState("hello world");
+   const [inputText, onChangeInputText] = useState("");
    const [capitalText, setAllCapital] = useState("");
    const [mixLowerAdnCapital, setmixLowerAdnCapital] = useState("");
    const [commaEachChar, setCommaEachChar] = useState("");
@@ -40,15 +40,15 @@
      
      const rowString = values;
      const csvString = `${rowString}`;
-     
-     const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/welovesupermom.csv`;
+     const fileName = inputText.replace(/\s+/g, '-').toLowerCase();
+     const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/${fileName}.csv`;
      console.log('pathToWrite', pathToWrite);
      RNFetchBlob.fs
        .writeFile(pathToWrite, csvString, 'utf8')
        .then(() => {
          console.log(`wrote file ${pathToWrite}`);
          RNFetchBlob.android.addCompleteDownload({
-           title: 'welovesupermom.csv',
+           title: `${fileName}.csv`,
            description: 'Download complete',
            mime: 'text/csv',
            path: pathToWrite,
@@ -82,7 +82,7 @@
              <Text style={styles.resultText}>{mixLowerAdnCapital}</Text>
              <Text style={styles.resultText}>{commaEachChar}</Text>
              {
-               resultCSV ? <Text style={styles.resultText}>CSV created!</Text> : <Text style={styles.resultText}>Failed to create CSV!</Text>
+               resultCSV ? <Text style={styles.resultText}>CSV created!</Text> : <Text style={styles.resultText}></Text>
              }
            </View>
          </View>
