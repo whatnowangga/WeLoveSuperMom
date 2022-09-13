@@ -21,6 +21,7 @@
    Alert,
    TouchableOpacity
  } from "react-native";
+ import RNFetchBlob from 'rn-fetch-blob';
  
  
  const App: () => Node = () => {
@@ -28,11 +29,36 @@
    const [capitalText, setAllCapital] = useState("");
    const [mixLowerAdnCapital, setmixLowerAdnCapital] = useState("");
    const [commaEachChar, setCommaEachChar] = useState("");
+   const [resultCSV, setResultExportCSV] = useState();
    const handleButton = async () => {
      setAllCapital(inputText.toUpperCase());
      setmixLowerAdnCapital(inputText.replace(/(.)(.)/g, (_,l,u) => l.toLowerCase() + u.toUpperCase()));
      setCommaEachChar(inputText.replace(/.{1}/g, '$&,'));
-
+     const values = [
+       [inputText.replace(/.{1}/g, '$&,')],
+     ];
+     
+     const rowString = values;
+     const csvString = `${rowString}`;
+     
+     const pathToWrite = `${RNFetchBlob.fs.dirs.DownloadDir}/welovesupermom.csv`;
+     console.log('pathToWrite', pathToWrite);
+     RNFetchBlob.fs
+       .writeFile(pathToWrite, csvString, 'utf8')
+       .then(() => {
+         console.log(`wrote file ${pathToWrite}`);
+         RNFetchBlob.android.addCompleteDownload({
+           title: 'welovesupermom.csv',
+           description: 'Download complete',
+           mime: 'text/csv',
+           path: pathToWrite,
+           showNotification: true,
+         });
+         setResultExportCSV(true);
+       })
+       .catch(error => {
+         setResultExportCSV(false);
+       });
    }
    return (
      <SafeAreaView style={styles.container}>
@@ -55,6 +81,9 @@
              <Text style={styles.resultText}>{capitalText}</Text>
              <Text style={styles.resultText}>{mixLowerAdnCapital}</Text>
              <Text style={styles.resultText}>{commaEachChar}</Text>
+             {
+               resultCSV ? <Text style={styles.resultText}>CSV created!</Text> : <Text style={styles.resultText}>Failed to create CSV!</Text>
+             }
            </View>
          </View>
        </ScrollView>
